@@ -509,7 +509,6 @@ import ivy
 import numpy as np
 
 def histogram2d(x, y, bins=10, range=None, normed=False, weights=None):
-
     x_np = ivy.to_numpy(x)
     y_np = ivy.to_numpy(y)
 
@@ -524,6 +523,10 @@ def histogram2d(x, y, bins=10, range=None, normed=False, weights=None):
     )
 
     return ivy.array(hist2)
+
+
+histogram2d = ivy.to_ivy_func(histogram2d)
+
 
 
 
