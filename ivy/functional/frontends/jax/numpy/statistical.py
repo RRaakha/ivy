@@ -505,9 +505,26 @@ def var(a, axis=None, dtype=None, out=None, ddof=0, keepdims=False, *, where=Non
         ret = ivy.where(where, ret, ivy.default(out, ivy.zeros_like(ret)), out=out)
     return ivy.astype(ret, ivy.as_ivy_dtype(dtype), copy=False)
 
+import ivy
+import numpy as np
+
 def histogram2d(x, y, bins=10, range=None, normed=False, weights=None):
-    
-    return ivy.array(result)
+
+    x_np = ivy.to_numpy(x)
+    y_np = ivy.to_numpy(y)
+
+    if range is None:
+        x_range = (np.min(x_np), np.max(x_np))
+        y_range = (np.min(y_np), np.max(y_np))
+    else:
+        x_range, y_range = range
+
+    hist2, x_edges, y_edges = np.histogram2d(
+        x_np, y_np, bins=bins, range=[x_range, y_range], normed=normed, weights=weights
+    )
+
+    return ivy.array(hist2)
+
 
 
 
