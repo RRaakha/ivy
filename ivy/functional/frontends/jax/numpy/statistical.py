@@ -505,6 +505,11 @@ def var(a, axis=None, dtype=None, out=None, ddof=0, keepdims=False, *, where=Non
         ret = ivy.where(where, ret, ivy.default(out, ivy.zeros_like(ret)), out=out)
     return ivy.astype(ret, ivy.as_ivy_dtype(dtype), copy=False)
 
+def histogram2d(x, y, bins=10, range=None, normed=False, weights=None):
+    
+    return ivy.array(result)
+
+
 
 amax = max
 amin = min
