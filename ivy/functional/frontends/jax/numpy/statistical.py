@@ -515,15 +515,11 @@ def histogram2d(x, y, bins=10, range=None, normed=False, weights=None):
     y = ivy.asarray(y, copy=False)
     if x.shape != y.shape:
         raise ValueError("Input arrays 'x' and 'y' must have the same shape.")
-
-   
     if range is None:
         x_min, x_max = ivy.min(x), ivy.max(x)
         y_min, y_max = ivy.min(y), ivy.max(y)
     else:
         x_min, x_max, y_min, y_max = range
-
-    
     x_bins = ivy.linspace(x_min, x_max, bins + 1)
     y_bins = ivy.linspace(y_min, y_max, bins + 1)
 
@@ -533,15 +529,12 @@ def histogram2d(x, y, bins=10, range=None, normed=False, weights=None):
         for j in range(bins):
             x_mask = (x >= x_bins[i]) & (x < x_bins[i + 1])
             y_mask = (y >= y_bins[j]) & (y < y_bins[j + 1])
-            cell_mask = x_mask & y_mask
-
+            cell_mask = x_mask & y_maskp
             if weights is not None:
                 cell_weights = ivy.boolean_mask(weights, cell_mask)
                 hist[i, j] = ivy.sum(cell_weights)
             else:
                 hist[i, j] = ivy.sum(cell_mask)
-
-    
     if normed:
         dx = ivy.diff(x_bins)
         dy = ivy.diff(y_bins)
