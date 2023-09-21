@@ -505,6 +505,46 @@ def var(a, axis=None, dtype=None, out=None, ddof=0, keepdims=False, *, where=Non
         ret = ivy.where(where, ret, ivy.default(out, ivy.zeros_like(ret)), out=out)
     return ivy.astype(ret, ivy.as_ivy_dtype(dtype), copy=False)
 
+import ivy
+from ivy.func_wrapper import with_unsupported_dtypes
+from ivy.functional.frontends.jax.func_wrapper import to_ivy_arrays_and_back
+
+@to_ivy_arrays_and_back
+def histogram2d(x, y, bins=10, range=None, normed=False, weights=None):
+    x = ivy.asarray(x, copy=False)
+    y = ivy.asarray(y, copy=False)
+    if x.shape != y.shape:
+        raise ValueError("Input arrays 'x' and 'y' must have the same shape.")
+    if range is None:
+        x_min, x_max = ivy.min(x), ivy.max(x)
+        y_min, y_max = ivy.min(y), ivy.max(y)
+    else:
+        x_min, x_max, y_min, y_max = range
+    x_bins = ivy.linspace(x_min, x_max, bins + 1)
+    y_bins = ivy.linspace(y_min, y_max, bins + 1)
+
+    hist = ivy.zeros((bins, bins))
+
+    for i in range(bins):
+        for j in range(bins):
+            x_mask = (x >= x_bins[i]) & (x < x_bins[i + 1])
+            y_mask = (y >= y_bins[j]) & (y < y_bins[j + 1])
+            cell_mask = x_mask & y_maskp
+            if weights is not None:
+                cell_weights = ivy.boolean_mask(weights, cell_mask)
+                hist[i, j] = ivy.sum(cell_weights)
+            else:
+                hist[i, j] = ivy.sum(cell_mask)
+    if normed:
+        dx = ivy.diff(x_bins)
+        dy = ivy.diff(y_bins)
+        area = ivy.outer(dx, dy)
+        hist /= area
+
+    return hist
+
+
+
 
 amax = max
 amin = min
